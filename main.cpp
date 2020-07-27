@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <chrono>
 #include <iostream>
 
 const char *vertexShaderSource = "#version 330 core\n"
@@ -19,6 +20,10 @@ const char *fragmentShaderSource = "#version 330 core\n"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
+void fpsCounter();
+
+int nbOfFrames = 0;
+auto start = std::chrono::high_resolution_clock::now();	//useless first value
 
 int main()
 {
@@ -124,6 +129,9 @@ int main()
 	//// draw in wireframe polygons
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
+	//start chrono
+	start = std::chrono::high_resolution_clock::now();
+
 	// render loop
 	while (!glfwWindowShouldClose(window))
 	{
@@ -138,9 +146,12 @@ int main()
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 
+		// fps counter
+		fpsCounter();
+
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		glfwPollEvents();
 		glfwSwapBuffers(window);
+		glfwPollEvents();
 	}
 
 	// optional: de-allocate all resources once they've outlived their purpose
@@ -162,4 +173,17 @@ void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+}
+
+void fpsCounter()
+{
+	++nbOfFrames;
+	auto end = std::chrono::steady_clock::now();
+	std::chrono::duration<double> elapsed_seconds = end - start;
+	if (elapsed_seconds.count() >= 1)
+	{
+		std::cout << "FPS: " << nbOfFrames << std::endl;
+		start = std::chrono::high_resolution_clock::now();
+		nbOfFrames = 0;
+	}
 }
