@@ -105,11 +105,13 @@ int main()
 
 		shader.use();
 
-		//// update the uniform color
-		//float timeValue = glfwGetTime();
-		//float greenValue = sin(timeValue) / 2.0f + 0.5f;
-		//int vertexColorLocation = glGetUniformLocation(shader.ID, "ourColor");
-		//glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
+		// update the uniform color
+		float timeValue = glfwGetTime();
+		float greenValue = sin(timeValue) / 2.0f + 0.5f;
+		float redValue = sin(timeValue+1) / 2.0f + 0.5f;
+		float blueValue = sin(timeValue+2) / 2.0f + 0.5f;
+		int vertexColorLocation = glGetUniformLocation(shader.ID, "ourColor");
+		glUniform3f(vertexColorLocation, redValue, greenValue, blueValue);
 
 		glBindTexture(GL_TEXTURE_2D, texture);
 		glBindVertexArray(VAO);
