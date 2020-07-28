@@ -9,6 +9,8 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 
+float mixValue = 0.5f;
+
 int main()
 {
 	glfwInit();
@@ -37,10 +39,10 @@ int main()
 
 	float vertices[] = {
 		// positions          // colors           // texture coords
-		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   2.0f, 2.0f,   // top right
-		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   2.0f, 0.0f,   // bottom right
+		0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
+		0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
 		-0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 2.0f    // top left 
+		-0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left
 	};
 
 	unsigned int indices[] = {
@@ -131,13 +133,14 @@ int main()
 
 		shader.use();
 
-		// update the uniform color
-		float timeValue = glfwGetTime();
-		float greenValue = sin(timeValue) / 2.0f + 0.5f;
-		float redValue = sin(timeValue+1) / 2.0f + 0.5f;
-		float blueValue = sin(timeValue+2) / 2.0f + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shader.ID, "ourColor");
-		glUniform3f(vertexColorLocation, redValue, greenValue, blueValue);
+		//// update the uniform color
+		//float timeValue = glfwGetTime();
+		//float greenValue = sin(timeValue) / 2.0f + 0.5f;
+		//float redValue = sin(timeValue+1) / 2.0f + 0.5f;
+		//float blueValue = sin(timeValue+2) / 2.0f + 0.5f;
+		//int vertexColorLocation = glGetUniformLocation(shader.ID, "ourColor");
+		//glUniform3f(vertexColorLocation, redValue, greenValue, blueValue);
+		shader.setFloat("mixValue", mixValue);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture1);
@@ -165,4 +168,21 @@ void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		mixValue -= 0.001f;
+		std::cout << mixValue << std::endl;
+		if (mixValue <= 0.0f)
+			mixValue = 0.0f;
+	}
+		
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		mixValue += 0.001f;
+		std::cout << mixValue << std::endl;
+		if (mixValue >= 1.0f)
+			mixValue = 1.0f;
+	}
+		
 }
